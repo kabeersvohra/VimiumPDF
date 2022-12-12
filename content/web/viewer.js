@@ -152,6 +152,9 @@ var pdfjsWebLibs;
          */
         _onmousemove: function GrabToPan__onmousemove(event) {
           this.element.removeEventListener('scroll', this._endPan, true);
+              alert(pdfViewer.isHorizontalScrollbarEnabled);
+              alert(pdfViewer.isHorizontalScrollbarEnabled);
+              alert(pdfViewer.isHorizontalScrollbarEnabled);
           if (isLeftMouseReleased(event)) {
             this._endPan();
             return;
@@ -8152,14 +8155,15 @@ var pdfjsWebLibs;
               break;
             }
           /* in presentation mode */
+          case 72:
+          // 'h'
+            pdfViewer.container.scrollLeft -= 40; 
           case 37:
             // left arrow
             // horizontal scrolling using arrow keys
             if (pdfViewer.isHorizontalScrollbarEnabled) {
               break;
             }
-          case 72:
-          // 'h'
           case 75:
           // 'k'
           case 80:
@@ -8196,6 +8200,31 @@ var pdfjsWebLibs;
             if (!isViewerInPresentationMode && pdfViewer.currentScaleValue !== 'page-fit') {
               break;
             }
+          case 61:
+          // FF/Mac '='
+          case 107:
+          // FF '+' and '='
+          case 187:
+          // Chrome '+'
+            if (!isViewerInPresentationMode) {
+              PDFViewerApplication.zoomIn();
+            }
+            handled = true;
+            break;
+          case 173:
+          // FF/Mac '-'
+          case 109:
+          // FF '-'
+          case 189:
+            // Chrome '-'
+            if (!isViewerInPresentationMode) {
+              PDFViewerApplication.zoomOut();
+            }
+            handled = true;
+            break;
+          case 76:
+          // 'l'
+            pdfViewer.container.scrollLeft += 40; 
           case 39:
             // right arrow
             // horizontal scrolling using arrow keys
@@ -8204,8 +8233,6 @@ var pdfjsWebLibs;
             }
           case 74:
           // 'j'
-          case 76:
-          // 'l'
           case 78:
             // 'n'
             if (PDFViewerApplication.page < PDFViewerApplication.pagesCount) {
@@ -8227,12 +8254,6 @@ var pdfjsWebLibs;
               PDFViewerApplication.page = PDFViewerApplication.pagesCount;
               handled = true;
               ensureViewerFocused = true;
-            }
-            break;
-          case 72:
-            // 'h'
-            if (!isViewerInPresentationMode) {
-              PDFViewerApplication.handTool.toggle();
             }
             break;
           case 82:
@@ -8263,14 +8284,17 @@ var pdfjsWebLibs;
         if (!handled && !isViewerInPresentationMode) {
           // 33=Page Up  34=Page Down  35=End    36=Home
           // 37=Left     38=Up         39=Right  40=Down
-          // 32=Spacebar
-          if (evt.keyCode >= 33 && evt.keyCode <= 40 || evt.keyCode === 32 && curElementTagName !== 'BUTTON') {
+          // 32=Spacebar 72=h          76=l
+          if (evt.keyCode >= 33 && evt.keyCode <= 40 || evt.keyCode === 32 && curElementTagName !== 'BUTTON'
+                 || evt.keyCode == 72 || evt.keyCode == 76) {
             ensureViewerFocused = true;
           }
         }
         if (cmd === 2) {
           // alt-key
           switch (evt.keyCode) {
+          case 72:
+          // 'h'
           case 37:
             // left arrow
             if (isViewerInPresentationMode) {
@@ -8278,6 +8302,8 @@ var pdfjsWebLibs;
               handled = true;
             }
             break;
+          case 76:
+          // 'l'
           case 39:
             // right arrow
             if (isViewerInPresentationMode) {
@@ -8552,7 +8578,7 @@ var pdfjsWebLibs;
         // Chrome closes all extension tabs (crbug.com/511670) when the extension
         // reloads. To counter this, the tab URL and history state is saved to
         // localStorage and restored by extension-router.js.
-        // Unfortunately, the window and tab index are not restored. And if it was
+            // Unfortunately, the window and tab index are not restored. And if it was
         // the only tab in an incognito window, then the tab is not restored either.
         addEventListener('unload', function () {
           // If the runtime is still available, the unload is most likely a normal
